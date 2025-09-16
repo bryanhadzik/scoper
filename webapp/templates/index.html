@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Topic Estimator</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; margin: 0; }
+        .sidebar { width: 200px; background: #f0f0f0; padding: 10px; }
+        .content { flex-grow: 1; padding: 20px; }
+        .topic { margin-bottom: 20px; }
+        .subtopic { margin-left: 20px; }
+        .sub-subtopic { margin-left: 40px; }
+        input[type="number"] { width: 60px; }
+    </style>
+    <script>
+        function showTopic(topic) {
+            const topics = document.querySelectorAll(".topic");
+            topics.forEach(t => t.style.display = "none");
+            document.getElementById(topic).style.display = "block";
+            updateTotal();
+        }
+
+        function updateTotal() {
+            let overallTotal = 0;
+            document.querySelectorAll(".topic").forEach(topic => {
+                let topicTotal = 0;
+                topic.querySelectorAll("input[type='number']").forEach(input => {
+                    topicTotal += parseFloat(input.value) || 0;
+                });
+                topic.querySelector(".topic-total").textContent = "Total: " + topicTotal + " hrs";
+                overallTotal += topicTotal;
+            });
+            document.getElementById("overall-total").textContent = "Overall Total: " + overallTotal + " hrs";
+        }
+    </script>
+</head>
+<body>
+    <div class="sidebar">
+        {% for topic in topics %}
+            <div><button onclick="showTopic('{{ topic }}')">{{ topic }}</button></div>
+        {% endfor %}
+    </div>
+    <div class="content">
+        {% for topic, subtopics in topics.items() %}
+        <div class="topic" id="{{ topic }}" style="display:none;">
+            <h2>{{ topic }}</h2>
+            {% for sub in subtopics %}
+                <div class="subtopic">
+                    <h3>{{ sub }}</h3>
+                    {% for subsub in sub_subtopics[sub] %}
+                        <div class="sub-subtopic">
+                            {{ subsub }}: <input type="number" value="2" onchange="updateTotal()"> hrs
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <div class="topic-total">Total: 0 hrs</div>
+        </div>
+        {% endfor %}
+        <div id="overall-total">Overall Total: 0 hrs</div>
+    </div>
+</body>
+</html>
