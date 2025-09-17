@@ -1,6 +1,7 @@
 version: '3'
 services:
   scoper:
-    build: .
+    build: ./webapp
     ports:
       - "5000:5000"
+
