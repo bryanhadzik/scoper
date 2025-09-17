@@ -1,0 +1,64 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+}
+.sidebar {
+    width: 200px;
+    background-color: #f4f4f4;
+    padding: 10px;
+    overflow-y: auto;
+}
+.topic-folder {
+    cursor: pointer;
+    padding: 8px;
+    margin-bottom: 5px;
+    background-color: #ddd;
+    border-radius: 4px;
+}
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+.topic-popup {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+.label {
+    flex-grow: 1;
+}
+.hours-input {
+    width: 60px;
+    text-align: right;
+}
+.submit-btn, .back-btn {
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+}
+.back-btn {
+    display: inline-block;
+}
