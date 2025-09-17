@@ -3,43 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <title>Topic Estimator</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
     <div class="container">
-        <form method="POST">
-            <div class="sidebar">
-                {% for topic in topics %}
-                <div class="topic-folder" onclick="toggleTopic('{{ topic }}')">
-                    📁 {{ topic.title() }}
-                </div>
-                {% endfor %}
-            </div>
-            <div class="main-content">
-                {% for topic, subs in topics.items() %}
-                <div class="topic-popup" id="{{ topic }}" style="display:none;">
-                    <h2>{{ topic.title() }}</h2>
-                    {% for sub in subs %}
-                        <h3>{{ sub }}</h3>
-                        <ul>
-                        {% for subsub in subtopics[sub] %}
-                            <li>
-                                <span class="label">{{ subsub }}</span>
-                                <input type="number" name="{{ topic }}_{{ sub }}_{{ subsub }}" value="{{ default_hours }}" step="0.5" class="hours-input">
-                            </li>
-                        {% endfor %}
-                        </ul>
-                    {% endfor %}
-                </div>
-                {% endfor %}
-                <button type="submit" class="submit-btn">View Summary</button>
-            </div>
-        </form>
+        <div class="sidebar">
+            <h2>Topics</h2>
+            <ul>
+                <li onclick="showTopic('incident')">Incident</li>
+                <li onclick="showTopic('change')">Change</li>
+                <li onclick="showTopic('self_service')">Self Service</li>
+                <li onclick="showTopic('knowledge')">Knowledge</li>
+                <li onclick="showSummary()">Summary</li>
+            </ul>
+        </div>
+        <div class="content" id="content">
+            <h2>Select a topic from the sidebar</h2>
+        </div>
     </div>
+
     <script>
-        function toggleTopic(topicId) {
-            document.querySelectorAll('.topic-popup').forEach(el => el.style.display = 'none');
-            document.getElementById(topicId).style.display = 'block';
+        const topics = {
+            incident: ["Report Issue", "Diagnose Problem", "Resolve Incident"],
+            change: ["Request Change", "Assess Impact", "Implement Change"],
+            self_service: ["Access Portal", "Use Tools", "Submit Request"],
+            knowledge: ["Search Articles", "Read Documentation", "Contribute Content"]
+        };
+
+        const hours = {};
+
+        function showTopic(topic) {
+            const content = document.getElementById("content");
+            content.innerHTML = `<h2>${topic.replace('_', ' ').toUpperCase()}</h2>`;
+            const list = document.createElement("ul");
+            list.className = "subtopic-list";
+            topics[topic].forEach((sub, i) => {
+                const li = document.createElement("li");
+                li.innerHTML = `
+                    <span class="subtopic-text">${sub}</span>
+                    <input type="number" class="hour-input" value="2" min="0" onchange="updateHours('${topic}', ${i}, this.value)">
+                `;
+                list.appendChild(li);
+            });
+            content.appendChild(list);
+        }
+
+        function updateHours(topic, index, value) {
+            if (!hours[topic]) hours[topic] = [];
+            hours[topic][index] = parseFloat(value);
+        }
+
+        function showSummary() {
+            const content = document.getElementById("content");
+            content.innerHTML = "<h2>Summary</h2>";
+            let total = 0;
+            const summaryList = document.createElement("ul");
+            summaryList.className = "summary-list";
+            for (const topic in hours) {
+                const topicTotal = hours[topic].reduce((a, b) => a + b, 0);
+                total += topicTotal;
+                const li = document.createElement("li");
+                li.innerHTML = `<strong>${topic.replace('_', ' ').toUpperCase()}</strong>: ${topicTotal.toFixed(2)} hours`;
+                summaryList.appendChild(li);
+            }
+            const overall = document.createElement("p");
+            overall.innerHTML = `<strong>Total Hours:</strong> ${total.toFixed(2)}`;
+            content.appendChild(summaryList);
+            content.appendChild(overall);
         }
     </script>
 </body>
